@@ -10,7 +10,8 @@ If the room is clean it shifts to the next adjacent room, if it is dirty it clea
 
 ## PEAS DESCRIPTION
 
-![description](https://user-images.githubusercontent.com/75235818/162262176-79eb978b-c4a3-407f-9d61-8c319b4026d7.jpeg
+![description](https://user-images.githubusercontent.com/75235818/162262557-5b63dbba-75a7-4084-8ae7-26f3290a1114.jpeg)
+
 
 ## DESIGN STEPS
 ### STEP 1:
@@ -41,7 +42,7 @@ The agent should detect the dirt and clean-if the location it is dirty,else it s
 The performance is measured with the dirt detection and cleaning.
 
 ## PROGRAM
-
+```
 import random
 import time
 class Thing:
@@ -277,9 +278,8 @@ if __name__ == "__main__":
         print('Agent Location\n',agent.location)
         print('Agent Performance\n',agent.performance)
         time.sleep(3)
-
-
-
+     
+```
 ## OUTPUT
 
 ![output5](https://user-images.githubusercontent.com/75235818/162262461-2213d5c3-2810-42e3-9279-e8936047cc55.jpg)
