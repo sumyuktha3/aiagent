@@ -1,5 +1,5 @@
 import random
-
+import time
 class Thing:
     """
         This represents any physical object that can appear in an Environment.
@@ -31,7 +31,6 @@ class Agent(Thing):
 
 def TableDrivenAgentProgram(table):
     """
-    [Figure 2.7]
     This agent selects an action based on the percept sequence.
     It is practical only for tiny domains.
     To customize it, provide as table a dictionary of all
@@ -40,31 +39,37 @@ def TableDrivenAgentProgram(table):
     percepts = []
 
     def program(percept):
-        action =None
-        """
-        Write your code here
-        """
+        percepts.append(percept)
+        action=table.get(tuple(percept))
         return action
 
     return program
 
-loc_A, loc_B = (0, 0), (1, 0)  # The two locations for the Vacuum world
-
+le_T, le_A, le_B, le_C, le_D, le_P, le_Q, le_R, le_S = (1,1), (2,2), (1,2), (0,2), (0,1), (0,0), (1,0), (2,0), (2,1) 
 
 def TableDrivenVacuumAgent():
     """
     Tabular approach towards vacuum world
     """
-    table = {((loc_A, 'Clean'),): 'Right',
-             ((loc_A, 'Dirty'),): 'Suck',
-             ((loc_B, 'Clean'),): 'Left',
-             ((loc_B, 'Dirty'),): 'Suck',
-             ((loc_A, 'Dirty'), (loc_A, 'Clean')): 'Right',
-             ((loc_A, 'Clean'), (loc_B, 'Dirty')): 'Suck',
-             ((loc_B, 'Clean'), (loc_A, 'Dirty')): 'Suck',
-             ((loc_B, 'Dirty'), (loc_B, 'Clean')): 'Left',
-             ((loc_A, 'Dirty'), (loc_A, 'Clean'), (loc_B, 'Dirty')): 'Suck',
-             ((loc_B, 'Dirty'), (loc_B, 'Clean'), (loc_A, 'Dirty')): 'Suck'}
+    table = {(le_T, 'Clean'): 'NE',
+             (le_T, 'Dirty'): 'Suck',
+             (le_A, 'Clean'): 'West1',
+             (le_A, 'Dirty'): 'Suck',
+             (le_B, 'Clean'): 'West2',
+             (le_B, 'Dirty'): 'Suck',
+             (le_C, 'Clean'): 'South1',
+             (le_C, 'Dirty'): 'Suck',
+             (le_D, 'Clean'): 'South2',
+             (le_D, 'Dirty'): 'Suck',
+             (le_P, 'Clean'): 'East1',
+             (le_P, 'Dirty'): 'Suck',
+             (le_Q, 'Clean'): 'East2',
+             (le_Q, 'Dirty'): 'Suck',
+             (le_R, 'Clean'): 'North',
+             (le_R, 'Dirty'): 'Suck',
+             (le_S, 'Clean'): 'Initial',
+             (le_S, 'Dirty'): 'Suck',
+    }
     return Agent(TableDrivenAgentProgram(table))
 
 
@@ -157,8 +162,15 @@ class TrivialVacuumEnvironment(Environment):
 
     def __init__(self):
         super().__init__()
-        self.status = {loc_A: random.choice(['Clean', 'Dirty']),
-                       loc_B: random.choice(['Clean', 'Dirty'])}
+        self.status = {le_T: random.choice(['Clean', 'Dirty']),
+                       le_A: random.choice(['Clean', 'Dirty']),
+                       le_B: random.choice(['Clean', 'Dirty']),
+                       le_C: random.choice(['Clean', 'Dirty']),
+                       le_D: random.choice(['Clean', 'Dirty']),
+                       le_P: random.choice(['Clean', 'Dirty']),
+                       le_Q: random.choice(['Clean', 'Dirty']),
+                       le_R: random.choice(['Clean', 'Dirty']),
+                       le_S: random.choice(['Clean', 'Dirty']),}
 
     def thing_classes(self):
         return [ TableDrivenVacuumAgent]
@@ -170,20 +182,54 @@ class TrivialVacuumEnvironment(Environment):
     def execute_action(self, agent, action):
         """Change agent's location and/or location's status; track performance.
         Score 10 for each dirt cleaned; -1 for each move."""
-
-        """
-        Write your code here
-        """
+        if action=='NE':
+            agent.location = le_A
+            agent.performance -=1
+        elif action=='West1':
+            agent.location = le_B
+            agent.performance -=1
+        elif action=='West2':
+            agent.location = le_C
+            agent.performance -=1
+        elif action=='South1':
+            agent.location = le_D
+            agent.performance -=1
+        elif action=='South2':
+            agent.location = le_P
+            agent.performance -=1
+        elif action=='East1':
+            agent.location = le_Q
+            agent.performance -=1
+        elif action=='East2':
+            agent.location = le_R
+            agent.performance -=1
+        elif action=='North':
+            agent.location = le_S
+            agent.performance -=1
+        elif action=='Initial':
+            agent.location = le_T
+            agent.performance -=1
+        elif action=='Suck':
+            if self.status[agent.location]=='Dirty':
+                agent.performance+=10
+            self.status[agent.location]='Clean'
 
     def default_location(self, thing):
         """Agents start in either location at random."""
-        return random.choice([loc_A, loc_B])
+        return random.choice([le_T, le_A, le_B, le_C, le_D, le_P, le_Q, le_R, le_S])
 
 
 if __name__ == "__main__":
     agent = TableDrivenVacuumAgent()
     environment = TrivialVacuumEnvironment()
     environment.add_thing(agent)
-    print(environment.status)
-    environment.run()
-    print(agent.performance)
+    print('Starting Action\n',environment.status)
+    print('Agent Location\n',agent.location)
+    print('Agent Performance\n',agent.performance)
+    time.sleep(3)
+    for i in range(3):
+        print(environment.run(steps=1))
+        print('Ending Action\n',environment.status)
+        print('Agent Location\n',agent.location)
+        print('Agent Performance\n',agent.performance)
+        time.sleep(3)
